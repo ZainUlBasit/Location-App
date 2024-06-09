@@ -40,7 +40,7 @@ const Navbar = () => {
         >
           Direction
         </div>
-        <div
+        {/* <div
           className="font-bold text-xl cursor-pointer"
           onClick={() => navigate("/contacts")}
         >
@@ -51,7 +51,7 @@ const Navbar = () => {
           onClick={() => navigate("/login")}
         >
           Login
-        </div>
+        </div> */}
       </div>
     </div>
   );
