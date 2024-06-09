@@ -1,9 +1,16 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom/client";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import {
+  createBrowserRouter,
+  Navigate,
+  RouterProvider,
+} from "react-router-dom";
 import "./index.css";
 import App from "./App";
 import FromToDestination from "./FromToDestination";
+import Directions from "./Directions";
+import Routes from "./Routes";
+import Places from "./Places";
 
 const router = createBrowserRouter([
   {
@@ -11,8 +18,20 @@ const router = createBrowserRouter([
     element: <App />,
   },
   {
-    path: "/from-to-destination",
-    element: <FromToDestination />,
+    path: "/directions",
+    element: <Directions />,
+  },
+  {
+    path: "/routes",
+    element: <Routes />,
+  },
+  {
+    path: "/places",
+    element: <Places />,
+  },
+  {
+    path: "*",
+    element: <Navigate to="/" replace />,
   },
 ]);
 

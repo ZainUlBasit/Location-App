@@ -17,12 +17,12 @@ import {
   Autocomplete,
   DirectionsRenderer,
 } from "@react-google-maps/api";
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState } from "react";
 import Navbar from "./Navbar";
 
 const center = { lat: 48.8584, lng: 2.2945 };
 
-function App() {
+function Places() {
   const { isLoaded } = useJsApiLoader({
     googleMapsApiKey: "AIzaSyCn3iFUNjO37dPrLUYkJLxW_Iqxcuojq_A",
     libraries: ["places"],
@@ -34,34 +34,10 @@ function App() {
   const [duration, setDuration] = useState("");
   const [searchLocation, setSearchLocation] = useState(null);
   const [trafficLayerVisible, setTrafficLayerVisible] = useState(false);
-  const [currentLocation, setCurrentLocation] = useState(null);
 
   const originRef = useRef();
   const destinationRef = useRef();
   const searchRef = useRef();
-
-  useEffect(() => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition((position) => {
-        const { latitude, longitude } = position.coords;
-        const geocoder = new google.maps.Geocoder();
-        geocoder.geocode(
-          { location: { lat: latitude, lng: longitude } },
-          (results, status) => {
-            if (status === "OK" && results[0]) {
-              const city = results[0].address_components.find((component) =>
-                component.types.includes("locality")
-              ).long_name;
-              originRef.current.value = city;
-              setCurrentLocation({ lat: latitude, lng: longitude });
-            } else {
-              console.error("Geocoder failed due to: " + status);
-            }
-          }
-        );
-      });
-    }
-  }, []);
 
   if (!isLoaded) {
     return <div>Loading...</div>;
@@ -144,7 +120,7 @@ function App() {
       >
         <Box position="absolute" left={0} top={0} h="100%" w="100%">
           <GoogleMap
-            center={currentLocation || center}
+            center={center}
             zoom={15}
             mapContainerStyle={{ width: "100%", height: "100%" }}
             options={{
@@ -157,16 +133,82 @@ function App() {
               setMap(map);
             }}
           >
-            {currentLocation && <Marker position={currentLocation} />}
+            <Marker position={center} />
             {searchLocation && <Marker position={searchLocation} />}
             {directionsResponse && (
               <DirectionsRenderer directions={directionsResponse} />
             )}
           </GoogleMap>
         </Box>
+        <Box
+          p={10}
+          m={4}
+          bgColor="white"
+          shadow="base"
+          minW="container.md"
+          zIndex="1"
+          border="2px solid black"
+          borderRadius="10px"
+        >
+          {/* Location Search Section */}
+          <HStack spacing={2} justifyContent="space-between" mb={4}>
+            <Box
+              flexGrow={1}
+              border="2px solid black"
+              borderRadius="10px"
+              p={2}
+            >
+              <Autocomplete>
+                <Input
+                  type="text"
+                  placeholder="Search Location"
+                  ref={searchRef}
+                  outline={"none"}
+                  p={4}
+                />
+              </Autocomplete>
+            </Box>
+            <Button
+              colorScheme="pink"
+              onClick={searchPlace}
+              bg={"#5a4ae3"}
+              color={"#fff"}
+              p={5}
+              border={"4px solid #5a4ae3"}
+              borderRadius={"10px"}
+              transition={"all .7s ease-in-out"}
+              _hover={{
+                bg: "white",
+                color: "#5a4ae3",
+              }}
+            >
+              Search Location
+            </Button>
+          </HStack>
+
+          {/* Traffic Layer Toggle */}
+          <HStack spacing={2} justifyContent="center">
+            <Button
+              colorScheme="pink"
+              onClick={toggleTrafficLayer}
+              bg={"#5a4ae3"}
+              color={"#fff"}
+              p={5}
+              border={"4px solid #5a4ae3"}
+              borderRadius={"10px"}
+              transition={"all .7s ease-in-out"}
+              _hover={{
+                bg: "white",
+                color: "#5a4ae3",
+              }}
+            >
+              {trafficLayerVisible ? "Hide Traffic" : "Show Traffic"}
+            </Button>
+          </HStack>
+        </Box>
       </Flex>
     </div>
   );
 }
 
-export default App;
+export default Places;
